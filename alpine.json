@@ -7,15 +7,15 @@
     "guest_os_type": "Ubuntu_64",
     "disk_size": 10240,
 
-    "iso_url": "http://wiki.alpinelinux.org/cgi-bin/dl.cgi/v3.0/releases/x86_64/alpine-3.0.6-x86_64.iso",
-    "iso_checksum": "2b326b33a0c130b9bef8c871805cd1ed258838b1",
-    "iso_checksum_type": "sha1",
+    "iso_url": "alpine-vagrant-base.iso",
+    "iso_checksum_type": "none",
 
     "boot_wait": "30s",
     "boot_command": [
       "root<enter><wait>",
-      "nc -lp 22&<enter>",
-      "ifconfig eth1 up && udhcpc -i eth1<enter><wait5>",
+      "ifconfig eth1 up && udhcpc -i eth1<enter>",
+      "ifconfig eth0 up && udhcpc -i eth0<enter>",
+
       "setup-alpine<enter><wait>",
       "us<enter>",
       "us<enter>",
@@ -26,11 +26,11 @@
       "UTC<enter><wait5><enter>",
       "1<enter>",
       "openssh<enter><wait5>",
-      "openntpd<enter><wait>",
+      "chrony<enter><wait5>",
       "sda<enter>",
       "sys<enter>",
       "y<enter><wait10><wait10>",
-      "killall -9 nc<enter>",
+
       "service sshd stop<enter>",
       "sysctl -w kernel.grsecurity.chroot_caps=0<enter>",
       "sysctl -w kernel.grsecurity.chroot_deny_chmod=0<enter>",
@@ -48,20 +48,21 @@
       "mount /dev/sda3 /mnt<enter><wait>",
       "mount -o bind /dev /mnt/dev<enter>",
       "chroot /mnt<enter>",
-      "ln -sf /bin/ash /bin/bash<enter>",
+
       "mount -t proc none /proc<enter>",
       "mount -t devpts devpts /dev/pts<enter>",
-      "apk add sudo wget bash virtualbox-additions-grsec<enter><wait10><wait10>",
+      "apk add sudo wget bash rsync<enter><wait5>",
       "adduser vagrant<enter>vagrant<enter>vagrant<enter>",
-      "killall -9 udhcpc<enter>",
-      "ifconfig eth1 down<enter>",
+
       "setup-interfaces<enter>",
       "eth0<enter>",
       "dhcp<enter>",
-      "done<enter>no<enter>",
+      "done<enter>",
+      "no<enter>",
+
       "echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers<enter>",
-      "/usr/sbin/sshd<enter>",
-      "ifup eth0<enter>"
+      "rc-update add sshd<enter>",
+      "/usr/sbin/sshd<enter>"
     ],
 
     "http_directory": "http",
@@ -75,13 +76,13 @@
     "vboxmanage": [
       ["modifyvm", "{{.Name}}", "--memory", "512"],
       ["modifyvm", "{{.Name}}", "--cpus", "1"],
-      ["modifyvm", "{{.Name}}", "--nic2", "bridged", "--cableconnected2", "on", "--bridgeadapter2", "en0"]
+      ["modifyvm", "{{.Name}}", "--nic2", "bridged", "--cableconnected2", "on", "--bridgeadapter2", "wlp3s0"]
     ],
 
     "shutdown_command": "echo 'vagrant'|sudo -S poweroff"
   }],
   "post-processors": [{
-    "output": "build/alpine-3.0.6-amd64.box",
+    "output": "build/alpine-latest-amd64.box",
     "type": "vagrant"
   }],
   "provisioners": [{

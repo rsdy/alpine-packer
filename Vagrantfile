@@ -13,4 +13,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 		#node.vm.network :private_network, ip: "10.220.43.10"
 		node.vm.box = "alpine64"
 	end
+	config.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: "*"
 end

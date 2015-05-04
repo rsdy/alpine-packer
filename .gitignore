@@ -3,3 +3,6 @@ packer_cache
 output-virtualbox-iso
 .DS_Store
 .vagrant
+
+*.iso
+*.asc
