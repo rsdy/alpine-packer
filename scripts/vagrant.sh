@@ -6,3 +6,6 @@ chown -R vagrant /home/vagrant/.ssh
 chmod -R go-rwsx /home/vagrant/.ssh
 chmod 0755 /home/vagrant/.ssh
 chmod 0644 /home/vagrant/.ssh/authorized_keys
+
+echo "poweroff" >/usr/local/bin/shutdown
+chmod +x /usr/local/bin/shutdown
